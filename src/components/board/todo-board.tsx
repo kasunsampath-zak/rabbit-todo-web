@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { TodoForm } from './todo-form';
 import { TodoStatus, type Todo } from '@/types/api';
 import { CheckCircle2, Clock, PlayCircle, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
@@ -161,6 +162,11 @@ export function TodoBoard() {
         <div className="text-sm text-muted-foreground">
           {todos?.length || 0} total tasks
         </div>
+      </div>
+
+      {/* Create Todo Form */}
+      <div className="mb-6">
+        <TodoForm />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

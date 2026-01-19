@@ -3,6 +3,8 @@ import "./globals.css";
 import { QueryProvider } from "@/lib/query-provider";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { Toaster } from "@/components/ui/toaster";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 export const metadata: Metadata = {
   title: "Rabbit Todo - Task Management",
@@ -17,13 +19,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <QueryProvider>
-          <AuthProvider>
-            <AuthGuard>
-              {children}
-            </AuthGuard>
-          </AuthProvider>
-        </QueryProvider>
+        <ErrorBoundary>
+          <QueryProvider>
+            <AuthProvider>
+              <AuthGuard>
+                {children}
+              </AuthGuard>
+            </AuthProvider>
+          </QueryProvider>
+          <Toaster />
+        </ErrorBoundary>
       </body>
     </html>
   );

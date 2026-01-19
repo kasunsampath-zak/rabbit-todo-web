@@ -12,17 +12,26 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
+// Helper function to safely encode credentials for Basic Auth
+function encodeCredentials(username: string, password: string): string {
+  // Use Buffer if available (Node.js), otherwise btoa (browser)
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(`${username}:${password}`).toString('base64');
+  }
+  // For browser, handle special characters by encoding first
+  return btoa(unescape(encodeURIComponent(`${username}:${password}`)));
+}
+
 // Basic Auth interceptor
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Get Basic Auth credentials from environment or local storage
-    const username = process.env.NEXT_PUBLIC_API_USERNAME || 
-                     (typeof window !== 'undefined' ? localStorage.getItem('api_username') : null);
-    const password = process.env.NEXT_PUBLIC_API_PASSWORD || 
-                     (typeof window !== 'undefined' ? localStorage.getItem('api_password') : null);
+    // Get Basic Auth credentials from local storage only (client-side)
+    // Never use NEXT_PUBLIC_ env vars for credentials as they are exposed to client
+    const username = typeof window !== 'undefined' ? localStorage.getItem('api_username') : null;
+    const password = typeof window !== 'undefined' ? localStorage.getItem('api_password') : null;
 
     if (username && password) {
-      const token = btoa(`${username}:${password}`);
+      const token = encodeCredentials(username, password);
       config.headers.Authorization = `Basic ${token}`;
     }
 

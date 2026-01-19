@@ -4,6 +4,9 @@
  * Converts them to minutes for calculations
  */
 
+// Configuration: hours per day (can be customized)
+export const HOURS_PER_DAY = 8;
+
 export interface ParsedDuration {
   days: number;
   hours: number;
@@ -43,8 +46,8 @@ export function parseDuration(duration: string): ParsedDuration {
     result.minutes = parseInt(minuteMatch[1], 10);
   }
 
-  // Calculate total minutes (assuming 8 hours per day)
-  result.totalMinutes = result.days * 8 * 60 + result.hours * 60 + result.minutes;
+  // Calculate total minutes using configurable hours per day
+  result.totalMinutes = result.days * HOURS_PER_DAY * 60 + result.hours * 60 + result.minutes;
 
   return result;
 }
@@ -52,15 +55,17 @@ export function parseDuration(duration: string): ParsedDuration {
 /**
  * Convert minutes to Jira-style duration string
  * @param minutes - Total minutes
+ * @param hoursPerDay - Optional hours per day (defaults to HOURS_PER_DAY constant)
  * @returns Duration string (e.g., "2h 30m")
  */
-export function formatDuration(minutes: number): string {
+export function formatDuration(minutes: number, hoursPerDay: number = HOURS_PER_DAY): string {
   if (!minutes || minutes <= 0) {
     return '0m';
   }
 
-  const days = Math.floor(minutes / (8 * 60));
-  const remainingMinutes = minutes % (8 * 60);
+  const minutesPerDay = hoursPerDay * 60;
+  const days = Math.floor(minutes / minutesPerDay);
+  const remainingMinutes = minutes % minutesPerDay;
   const hours = Math.floor(remainingMinutes / 60);
   const mins = remainingMinutes % 60;
 

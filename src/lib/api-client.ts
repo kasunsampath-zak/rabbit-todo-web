@@ -18,8 +18,11 @@ function encodeCredentials(username: string, password: string): string {
   if (typeof Buffer !== 'undefined') {
     return Buffer.from(`${username}:${password}`).toString('base64');
   }
-  // For browser, handle special characters by encoding first
-  return btoa(unescape(encodeURIComponent(`${username}:${password}`)));
+  // For browser, properly encode UTF-8 characters
+  const credentials = `${username}:${password}`;
+  const bytes = new TextEncoder().encode(credentials);
+  const binaryString = Array.from(bytes, byte => String.fromCharCode(byte)).join('');
+  return btoa(binaryString);
 }
 
 // Basic Auth interceptor
